@@ -662,11 +662,29 @@ async function setupPhotoUpload() {
     photoUpload.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
+            // Check file size (10MB limit)
+            if (file.size > 10 * 1024 * 1024) {
+                showLoginError('Photo is too large! Please use a photo smaller than 10MB.');
+                photoUpload.value = '';
+                return;
+            }
+            
+            // Check file type
+            if (!file.type.startsWith('image/')) {
+                showLoginError('Please select an image file (JPG, PNG, etc.)');
+                photoUpload.value = '';
+                return;
+            }
+            
             const reader = new FileReader();
             reader.onload = (e) => {
                 previewImage.src = e.target.result;
                 photoPreview.classList.remove('hidden');
                 uploadPhotoBtn.classList.remove('hidden');
+            };
+            reader.onerror = () => {
+                showLoginError('Error reading file. Please try again.');
+                photoUpload.value = '';
             };
             reader.readAsDataURL(file);
         }
@@ -676,6 +694,11 @@ async function setupPhotoUpload() {
     uploadPhotoBtn.addEventListener('click', async () => {
         if (currentEventDate && photoUpload.files[0]) {
             const file = photoUpload.files[0];
+            
+            // Show loading state
+            const originalText = uploadPhotoBtn.innerHTML;
+            uploadPhotoBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Uploading...';
+            uploadPhotoBtn.disabled = true;
             
             try {
                 const formData = new FormData();
@@ -708,6 +731,10 @@ async function setupPhotoUpload() {
             } catch (error) {
                 console.error('Upload error:', error);
                 showLoginError('Network error. Please try again.');
+            } finally {
+                // Reset button state
+                uploadPhotoBtn.innerHTML = originalText;
+                uploadPhotoBtn.disabled = false;
             }
         }
     });

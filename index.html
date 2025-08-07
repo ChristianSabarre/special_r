@@ -198,14 +198,17 @@
                              Add Photo to This Day
                          </h5>
                          <div class="space-y-4">
-                             <div class="flex items-center space-x-4">
-                                 <input type="file" id="photoUpload" accept="image/*" class="hidden">
-                                 <button id="selectPhotoBtn" class="bg-gradient-to-r from-pink-500 to-rose-500 text-white px-4 py-2 rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all">
+                             <div class="flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                                 <input type="file" id="photoUpload" accept="image/*" capture="environment" class="hidden">
+                                 <button id="selectPhotoBtn" class="w-full sm:w-auto bg-gradient-to-r from-pink-500 to-rose-500 text-white px-6 py-3 rounded-lg hover:from-pink-600 hover:to-rose-600 transition-all text-center">
                                      <i class="fas fa-camera mr-2"></i>Select Photo
                                  </button>
-                                 <button id="uploadPhotoBtn" class="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-4 py-2 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all hidden">
+                                 <button id="uploadPhotoBtn" class="w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 rounded-lg hover:from-green-600 hover:to-emerald-600 transition-all hidden text-center">
                                      <i class="fas fa-upload mr-2"></i>Upload Photo
                                  </button>
+                             </div>
+                             <div class="text-xs text-gray-500 text-center">
+                                 📱 Mobile-friendly • Max 10MB • JPG, PNG, GIF
                              </div>
                              <div id="photoPreview" class="hidden">
                                  <img id="previewImage" class="w-full max-w-xs rounded-lg shadow-md" alt="Photo preview">

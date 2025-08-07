@@ -67,8 +67,25 @@ app.post('/api/login', async (req, res) => {
     res.json({ token, username: user.username });
 });
 
+// Configure multer for better mobile compatibility
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024, // 10MB limit
+        files: 1
+    },
+    fileFilter: (req, file, cb) => {
+        // Allow common image formats
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    }
+});
+
 // Upload photo endpoint
-app.post('/api/photos/upload', authenticateToken, multer().single('photo'), (req, res) => {
+app.post('/api/photos/upload', authenticateToken, upload.single('photo'), (req, res) => {
     try {
         const { dateKey } = req.body;
         const file = req.file;
@@ -124,7 +141,16 @@ app.post('/api/photos/upload', authenticateToken, multer().single('photo'), (req
 
     } catch (error) {
         console.error('Upload error:', error);
-        res.status(500).json({ error: 'Failed to upload photo' });
+        
+        // Handle specific multer errors
+        if (error.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ error: 'Photo is too large! Please use a photo smaller than 10MB.' });
+        }
+        if (error.message === 'Only image files are allowed!') {
+            return res.status(400).json({ error: 'Please upload an image file (JPG, PNG, etc.)' });
+        }
+        
+        res.status(500).json({ error: 'Failed to upload photo. Please try again.' });
     }
 });
 
